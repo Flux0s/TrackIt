@@ -1,44 +1,45 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useRef } from "react";
+import { Button } from "@ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@ui/avatar";
+import { LogOut } from "lucide-react";
 
 export default function UserMenu({
   username,
+  email,
   image,
 }: {
   username?: string;
+  email?: string;
   image?: string;
 }) {
-  const usermenu = useRef<Menu | null>(null);
   const router = useRouter();
 
   return (
-    <div>
-      <Menu
-        popup
-        model={[
-          {
-            label: "Sign Out",
-            icon: "pi pi-sign-out",
-            command: () => {
-              router.push("/api/auth/signout");
-            },
-          },
-        ]}
-        ref={usermenu}
-      />
-      <Button
-        label={`${username || "User"}`}
-        onClick={(event) => usermenu.current?.toggle(event)}
-      >
-        <Avatar
-          className="ms-2"
-          shape="circle"
-          icon="pi pi-user"
-          label={username?.charAt(0)?.toUpperCase()}
-          image={image}
-        />
-      </Button>
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="px-1">
+          {username || email || "User"}
+          <Avatar className="h-8 w-8">
+            <AvatarImage src={image} alt={username || "User avatar"} />
+            <AvatarFallback>
+              {username?.[0]?.toUpperCase() || "U"}
+            </AvatarFallback>
+          </Avatar>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => router.push("/api/auth/signout")}>
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>Sign out</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
