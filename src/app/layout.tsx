@@ -1,13 +1,10 @@
 import "~/styles/globals.css";
-import "primeicons/primeicons.css";
-import "primereact/resources/themes/lara-dark-teal/theme.css";
 
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
-import { PrimeReactProvider, PrimeReactContext } from "primereact/api";
 
 import { TRPCReactProvider } from "~/trpc/react";
-import TopBar from "./_components/top-bar";
+import TopBar from "src/app/_components/top-bar";
 
 export const metadata: Metadata = {
   title: "TrackIt",
@@ -22,10 +19,8 @@ export default function RootLayout({
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
         <TRPCReactProvider>
-          <PrimeReactProvider>
-            <TopBar />
-            {children}
-          </PrimeReactProvider>
+          <TopBar />
+          {children}
         </TRPCReactProvider>
       </body>
     </html>
