@@ -56,12 +56,12 @@ export function NewHabitForm({ onSubmit }: NewHabitFormProps) {
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <Button
           size="lg"
-          className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl p-0"
+          className="fixed bottom-6 right-6 h-14 w-14 rounded-full p-0 shadow-lg hover:shadow-xl"
           onClick={() => setIsOpen(true)}
         >
           <Plus size={24} />
         </Button>
-        <SheetContent mode="push">
+        <SheetContent>
           <SheetHeader>
             <SheetTitle>Create New Habit</SheetTitle>
             <SheetDescription>
@@ -87,7 +87,9 @@ export function NewHabitForm({ onSubmit }: NewHabitFormProps) {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full">Add Habit</Button>
+                <Button type="submit" className="w-full">
+                  Add Habit
+                </Button>
               </form>
             </Form>
           </div>

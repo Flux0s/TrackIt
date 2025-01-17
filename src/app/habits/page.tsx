@@ -10,6 +10,15 @@ export default function HabitsPage() {
     { name: "Read 30 minutes" },
     { name: "Exercise" },
     { name: "Meditate" },
+    { name: "Write code" },
+    { name: "Practice guitar" },
+    { name: "Learn a new language" },
+    { name: "Draw or sketch" },
+    { name: "Cook a healthy meal" },
+    { name: "Clean the house" },
+    { name: "Water the plants" },
+    { name: "Take vitamins" },
+    { name: "Walk 10,000 steps" },
   ]);
 
   const handleNewHabit = (habitName: string) => {

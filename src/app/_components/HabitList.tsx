@@ -10,9 +10,9 @@ interface HabitListProps {
 
 export function HabitList({ habits = [] }: HabitListProps) {
   return (
-    <div className="grid gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 p-4">
       {habits.map((habit, index) => (
-        <Card key={index}>
+        <Card key={index} className="w-full">
           <CardHeader>
             <CardTitle>{habit.name}</CardTitle>
           </CardHeader>
