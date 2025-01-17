@@ -29,14 +29,45 @@ model Post {
 model Habit {
     id        String   @id @default(cuid())
     name      String
-    steps     String[]
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    createdBy   User   @relation(fields: [createdById], references: [id])
+    steps       HabitStep[]
+    completions HabitStepCompletion[]
+    createdBy   User                  @relation(fields: [createdById], references: [id])
     createdById String
 
     @@index([name])
+}
+
+model HabitStep {
+    id          String   @id @default(cuid())
+    habitId     String
+    description String
+    order       Int // To maintain step order
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    habit       Habit                 @relation(fields: [habitId], references: [id], onDelete: Cascade)
+    completions HabitStepCompletion[]
+
+    @@unique([habitId, order])
+    @@index([habitId])
+}
+
+model HabitStepCompletion {
+    id        String   @id @default(cuid())
+    stepId    String
+    habitId   String
+    date      DateTime // The date this step was completed (stored in UTC)
+    createdAt DateTime @default(now())
+
+    step  HabitStep @relation(fields: [stepId], references: [id], onDelete: Cascade)
+    habit Habit     @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+    @@unique([stepId, date])
+    @@index([date])
+    @@index([habitId])
 }
 
 // Necessary for Next auth
