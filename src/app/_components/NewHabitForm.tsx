@@ -52,49 +52,47 @@ export function NewHabitForm({ onSubmit }: NewHabitFormProps) {
   };
 
   return (
-    <>
-      <Sheet open={isOpen} onOpenChange={setIsOpen}>
-        <Button
-          size="lg"
-          className="fixed bottom-6 right-6 h-14 w-14 rounded-full p-0 shadow-lg hover:shadow-xl"
-          onClick={() => setIsOpen(true)}
-        >
-          <Plus size={24} />
-        </Button>
-        <SheetContent>
-          <SheetHeader>
-            <SheetTitle>Create New Habit</SheetTitle>
-            <SheetDescription>
-              Add a new habit to track your progress
-            </SheetDescription>
-          </SheetHeader>
-          <div className="mt-6">
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(handleSubmit)}
-                className="space-y-4"
-              >
-                <FormField
-                  control={form.control}
-                  name="habitName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>New Habit</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter habit name..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" className="w-full">
-                  Add Habit
-                </Button>
-              </form>
-            </Form>
-          </div>
-        </SheetContent>
-      </Sheet>
-    </>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <Button
+        size="lg"
+        className="fixed bottom-6 right-6 h-14 w-14 rounded-full p-0 shadow-lg hover:shadow-xl"
+        onClick={() => setIsOpen(true)}
+      >
+        <Plus size={24} />
+      </Button>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>Create New Habit</SheetTitle>
+          <SheetDescription>
+            Add a new habit to track your progress
+          </SheetDescription>
+        </SheetHeader>
+        <div className="mt-6">
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handleSubmit)}
+              className="space-y-4"
+            >
+              <FormField
+                control={form.control}
+                name="habitName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>New Habit</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter habit name..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" className="w-full">
+                Add Habit
+              </Button>
+            </form>
+          </Form>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 }

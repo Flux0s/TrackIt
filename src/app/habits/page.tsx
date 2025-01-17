@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Separator } from "@ui/separator";
 import { HabitList } from "@components/HabitList";
 import { NewHabitForm } from "@components/NewHabitForm";
 
@@ -10,15 +9,6 @@ export default function HabitsPage() {
     { name: "Read 30 minutes" },
     { name: "Exercise" },
     { name: "Meditate" },
-    { name: "Write code" },
-    { name: "Practice guitar" },
-    { name: "Learn a new language" },
-    { name: "Draw or sketch" },
-    { name: "Cook a healthy meal" },
-    { name: "Clean the house" },
-    { name: "Water the plants" },
-    { name: "Take vitamins" },
-    { name: "Walk 10,000 steps" },
   ]);
 
   const handleNewHabit = (habitName: string) => {
@@ -27,13 +17,7 @@ export default function HabitsPage() {
 
   return (
     <div className="container mx-auto">
-      <div className="flex items-center justify-between px-4 py-2">
-        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-          Habits
-        </h1>
-        <NewHabitForm onSubmit={handleNewHabit} />
-      </div>
-      <Separator />
+      <NewHabitForm onSubmit={handleNewHabit} />
       <HabitList habits={habits} />
     </div>
   );

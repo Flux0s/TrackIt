@@ -11,7 +11,7 @@ export default function Navigation() {
     <Link href="/habits">
       <Button
         variant="ghost"
-        className={`rounded-full px-2 ${pathname === "/habits" ? "text-md underline underline-offset-4" : ""}`}
+        className={`rounded-full px-2 ${pathname === "/habits" ? "text-md" : ""}`}
       >
         Habits
       </Button>
