@@ -15,10 +15,16 @@ export default function HabitsPage() {
     setHabits([...habits, { name: habitName }]);
   };
 
+  const handleEditHabit = (index: number, newName: string) => {
+    const newHabits = [...habits];
+    newHabits[index] = { name: newName };
+    setHabits(newHabits);
+  };
+
   return (
     <div className="container mx-auto">
       <NewHabitForm onSubmit={handleNewHabit} />
-      <HabitList habits={habits} />
+      <HabitList habits={habits} onEditHabit={handleEditHabit} />
     </div>
   );
 }
