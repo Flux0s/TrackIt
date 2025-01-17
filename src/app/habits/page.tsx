@@ -1,14 +1,20 @@
-import { Button } from "@ui/button";
-import { Plus } from "lucide-react";
+"use client";
+
+import { useState } from "react";
 import { Separator } from "@ui/separator";
 import { HabitList } from "@components/HabitList";
+import { NewHabitForm } from "@components/NewHabitForm";
 
 export default function HabitsPage() {
-  const sampleHabits = [
+  const [habits, setHabits] = useState([
     { name: "Read 30 minutes" },
     { name: "Exercise" },
     { name: "Meditate" },
-  ];
+  ]);
+
+  const handleNewHabit = (habitName: string) => {
+    setHabits([...habits, { name: habitName }]);
+  };
 
   return (
     <div className="container mx-auto">
@@ -16,13 +22,10 @@ export default function HabitsPage() {
         <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
           Habits
         </h1>
-        <Button className="rounded-full">
-          New Habit
-          <Plus className="h-4 w-4" />
-        </Button>
+        <NewHabitForm onSubmit={handleNewHabit} />
       </div>
       <Separator />
-      <HabitList habits={sampleHabits} />
+      <HabitList habits={habits} />
     </div>
   );
 }
