@@ -2,7 +2,14 @@
 
 import { Button } from "@ui/button";
 import { Input } from "@ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import * as z from "zod";
@@ -37,7 +44,9 @@ export function HabitForm({ initialHabit, onSubmit }: HabitFormProps) {
   });
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
-    const nonEmptySteps = values.steps.filter((step: string) => step.trim() !== "");
+    const nonEmptySteps = values.steps.filter(
+      (step: string) => step.trim() !== "",
+    );
     onSubmit(values.habitName, nonEmptySteps);
     form.reset();
   };
