@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@ui/card"
 import { Button } from "@ui/button";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
-import { HabitForm } from "./habits/HabitForm";
+import { HabitForm } from "./HabitForm";
 
 interface Habit {
   name: string;

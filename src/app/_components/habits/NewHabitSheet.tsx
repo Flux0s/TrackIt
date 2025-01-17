@@ -4,7 +4,7 @@ import { Button } from "@ui/button";
 import { Plus } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@ui/sheet";
 import { useState } from "react";
-import { HabitForm } from "./HabitForm";
+import { HabitForm } from "@components/habits/HabitForm";
 
 interface NewHabitSheetProps {
   onSubmit: (habitName: string) => void;

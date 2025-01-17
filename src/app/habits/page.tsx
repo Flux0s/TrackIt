@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { HabitList } from "@components/HabitList";
-import { NewHabitSheet } from "@components/NewHabitSheet";
+import { HabitList } from "@components/habits/HabitList";
+import { NewHabitSheet } from "@components/habits/NewHabitSheet";
 
 export default function HabitsPage() {
   const [habits, setHabits] = useState([
