@@ -6,7 +6,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { X, Check } from "lucide-react";
+import { Check } from "lucide-react";
 
 const formSchema = z.object({
   habitName: z.string().min(1, "Habit name is required"),
@@ -15,11 +15,9 @@ const formSchema = z.object({
 interface HabitFormProps {
   initialHabit?: { name: string };
   onSubmit: (name: string) => void;
-  onCancel?: () => void;
-  mode?: "create" | "edit";
 }
 
-export function HabitForm({ initialHabit, onSubmit, onCancel, mode = "create" }: HabitFormProps) {
+export function HabitForm({ initialHabit, onSubmit }: HabitFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -40,7 +38,7 @@ export function HabitForm({ initialHabit, onSubmit, onCancel, mode = "create" }:
           name="habitName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Habit Name</FormLabel>
+              <FormLabel>Name</FormLabel>
               <FormControl>
                 <Input placeholder="Enter habit name..." {...field} />
               </FormControl>
@@ -48,23 +46,9 @@ export function HabitForm({ initialHabit, onSubmit, onCancel, mode = "create" }:
             </FormItem>
           )}
         />
-        <div className="flex justify-end gap-2">
-          {onCancel && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={onCancel}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          )}
-          <Button
-            type="submit"
-            variant="ghost"
-            size="icon"
-          >
-            <Check className="h-4 w-4" />
+        <div>
+          <Button type="submit" className="mt-4 w-full">
+            <Check className="text-primary-foreground" />
           </Button>
         </div>
       </form>

@@ -23,8 +23,8 @@ export default function HabitsPage() {
 
   return (
     <div className="container mx-auto">
-      <HabitList habits={habits} onEditHabit={handleEditHabit} />
       <NewHabitSheet onSubmit={handleNewHabit} />
+      <HabitList habits={habits} onEditHabit={handleEditHabit} />
     </div>
   );
 }

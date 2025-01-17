@@ -25,18 +25,14 @@ export function NewHabitSheet({ onSubmit }: NewHabitSheetProps) {
         className="fixed bottom-6 right-6 h-14 w-14 rounded-full p-0 shadow-lg hover:shadow-xl"
         onClick={() => setIsOpen(true)}
       >
-        <Plus className="h-6 w-6" />
+        <Plus size={24}  />
       </Button>
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Create New Habit</SheetTitle>
         </SheetHeader>
         <div className="mt-6">
-          <HabitForm
-            mode="create"
-            onSubmit={handleSubmit}
-            onCancel={() => setIsOpen(false)}
-          />
+          <HabitForm onSubmit={handleSubmit} />
         </div>
       </SheetContent>
     </Sheet>
