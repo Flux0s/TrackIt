@@ -6,20 +6,28 @@ import { Ban, Pencil } from "lucide-react";
 import { useState } from "react";
 import { HabitForm } from "./HabitForm";
 import { cn } from "@lib/utils";
+import { Checkbox } from "@ui/checkbox";
+
+interface Step {
+  name: string;
+  completed: boolean;
+}
 
 interface HabitCardProps {
   habit: {
     name: string;
+    steps: Step[];
   };
-  onEdit: (newName: string) => void;
+  onEdit: (name: string, steps: string[]) => void;
+  onToggleStep: (stepIndex: number) => void;
 }
 
-export function HabitCard({ habit, onEdit }: HabitCardProps) {
+export function HabitCard({ habit, onEdit, onToggleStep }: HabitCardProps) {
   const [isEditing, setIsEditing] = useState(false);
 
-  const handleSubmit = (newName: string) => {
-    if (newName !== habit.name) {
-      onEdit(newName);
+  const handleSubmit = (name: string, steps: string[]) => {
+    if (name !== habit.name || !steps.every((step, i) => step === habit.steps[i]?.name)) {
+      onEdit(name, steps);
     }
     setIsEditing(false);
   };
@@ -41,8 +49,35 @@ export function HabitCard({ habit, onEdit }: HabitCardProps) {
         </Button>
       </CardHeader>
       <CardContent>
-        {isEditing && (
-          <HabitForm initialHabit={habit} onSubmit={handleSubmit} />
+        {isEditing ? (
+          <HabitForm
+            initialHabit={{
+              name: habit.name,
+              steps: habit.steps.map(step => step.name),
+            }}
+            onSubmit={handleSubmit}
+          />
+        ) : (
+          <div className="space-y-2">
+            {habit.steps.map((step, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <Checkbox
+                  id={`step-${index}`}
+                  checked={step.completed}
+                  onCheckedChange={() => onToggleStep(index)}
+                />
+                <label
+                  htmlFor={`step-${index}`}
+                  className={cn(
+                    "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+                    step.completed && "line-through opacity-70"
+                  )}
+                >
+                  {step.name}
+                </label>
+              </div>
+            ))}
+          </div>
         )}
       </CardContent>
     </Card>
