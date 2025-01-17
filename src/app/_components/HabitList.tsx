@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@ui/card"
 import { Button } from "@ui/button";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
-import { EditHabitForm } from "./EditHabitForm";
+import { HabitForm } from "./HabitForm";
 
 interface Habit {
   name: string;
@@ -22,8 +22,9 @@ export function HabitList({ habits = [], onEditHabit }: HabitListProps) {
         <Card key={index} className="h-fit">
           {editingHabitIndex === index ? (
             <CardContent className="pt-6">
-              <EditHabitForm
-                habit={habit}
+              <HabitForm
+                mode="edit"
+                initialHabit={habit}
                 onCancel={() => setEditingHabitIndex(null)}
                 onSubmit={(newName) => {
                   onEditHabit?.(index, newName);

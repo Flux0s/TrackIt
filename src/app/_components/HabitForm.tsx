@@ -12,22 +12,23 @@ const formSchema = z.object({
   habitName: z.string().min(1, "Habit name is required"),
 });
 
-interface EditHabitFormProps {
-  habit: { name: string };
-  onCancel: () => void;
-  onSubmit?: (habitName: string) => void;
+interface HabitFormProps {
+  initialHabit?: { name: string };
+  onSubmit: (name: string) => void;
+  onCancel?: () => void;
+  mode?: "create" | "edit";
 }
 
-export function EditHabitForm({ habit, onCancel, onSubmit }: EditHabitFormProps) {
+export function HabitForm({ initialHabit, onSubmit, onCancel, mode = "create" }: HabitFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      habitName: habit.name,
+      habitName: initialHabit?.name ?? "",
     },
   });
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
-    onSubmit?.(values.habitName);
+    onSubmit(values.habitName);
     form.reset();
   };
 
@@ -48,14 +49,16 @@ export function EditHabitForm({ habit, onCancel, onSubmit }: EditHabitFormProps)
           )}
         />
         <div className="flex justify-end gap-2">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={onCancel}
-          >
-            <X className="h-4 w-4" />
-          </Button>
+          {onCancel && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={onCancel}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
           <Button
             type="submit"
             variant="ghost"

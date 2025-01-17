@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { HabitList } from "@components/HabitList";
-import { NewHabitForm } from "@components/NewHabitForm";
+import { NewHabitSheet } from "@components/NewHabitSheet";
 
 export default function HabitsPage() {
   const [habits, setHabits] = useState([
@@ -23,8 +23,8 @@ export default function HabitsPage() {
 
   return (
     <div className="container mx-auto">
-      <NewHabitForm onSubmit={handleNewHabit} />
       <HabitList habits={habits} onEditHabit={handleEditHabit} />
+      <NewHabitSheet onSubmit={handleNewHabit} />
     </div>
   );
 }
