@@ -52,5 +52,15 @@ export const authConfig = {
         id: user.id,
       },
     }),
+    authorized: ({ auth, request }) => {
+      // Get the pathname of the request
+      const path = request?.nextUrl?.pathname;
+
+      // Define public routes that don't require authentication
+      const isPublicRoute = ["/", "/api/auth/signin"].includes(path ?? "");
+
+      // Allow access to public routes, otherwise require a valid user session
+      return isPublicRoute || !!auth?.user;
+    },
   },
 } satisfies NextAuthConfig;
