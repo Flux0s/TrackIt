@@ -8,9 +8,13 @@ export const habitRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string().min(1),
-        steps: z.array(z.object({
-          description: z.string().min(1),
-        })),
+        steps: z
+          .array(
+            z.object({
+              description: z.string().min(1),
+            }),
+          )
+          .min(1),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -28,7 +32,7 @@ export const habitRouter = createTRPCRouter({
         include: {
           steps: {
             orderBy: {
-              order: 'asc',
+              order: "asc",
             },
           },
         },
@@ -42,7 +46,7 @@ export const habitRouter = createTRPCRouter({
       include: {
         steps: {
           orderBy: {
-            order: 'asc',
+            order: "asc",
           },
           include: {
             completions: {
@@ -130,17 +134,21 @@ export const habitRouter = createTRPCRouter({
   updateStepOrder: protectedProcedure
     .input(
       z.object({
-        steps: z.array(z.object({
-          id: z.string(),
-          order: z.number().int().min(0),
-        })),
+        steps: z
+          .array(
+            z.object({
+              id: z.string(),
+              order: z.number().int().min(0),
+            }),
+          )
+          .min(1),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       // Verify all steps belong to the same habit and the user owns it
       const firstStep = await ctx.db.habitStep.findFirst({
         where: {
-          id: input.steps[0].id,
+          id: input.steps[0]?.id as string,
         },
         include: {
           habit: true,
@@ -183,7 +191,7 @@ export const habitRouter = createTRPCRouter({
         include: {
           steps: {
             orderBy: {
-              order: 'asc',
+              order: "asc",
             },
           },
         },
@@ -207,10 +215,7 @@ export const habitRouter = createTRPCRouter({
         include: {
           step: true,
         },
-        orderBy: [
-          { date: "asc" },
-          { step: { order: "asc" } },
-        ],
+        orderBy: [{ date: "asc" }, { step: { order: "asc" } }],
       });
     }),
 });

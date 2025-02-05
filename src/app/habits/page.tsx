@@ -1,86 +1,37 @@
-"use client";
-
-import { useState } from "react";
-import { HabitList } from "@components/habits/HabitList";
+import { HabitCard } from "@components/habits/HabitCard";
 import { NewHabitSheet } from "@components/habits/NewHabitSheet";
+import { api } from "~/trpc/server";
+import { HydrateClient } from "~/trpc/server";
+import { Suspense } from "react";
 
-interface Step {
-  name: string;
-  completed: boolean;
-}
-
-interface Habit {
-  name: string;
-  steps: Step[];
-}
-
-export default function HabitsPage() {
-  const [habits, setHabits] = useState<Habit[]>([
-    {
-      name: "Read 30 minutes",
-      steps: [
-        { name: "Get book", completed: false },
-        { name: "Find quiet spot", completed: false },
-        { name: "Read", completed: false },
-      ],
-    },
-    {
-      name: "Exercise",
-      steps: [
-        { name: "Change clothes", completed: false },
-        { name: "Warm up", completed: false },
-        { name: "Work out", completed: false },
-        { name: "Cool down", completed: false },
-      ],
-    },
-    {
-      name: "Meditate",
-      steps: [
-        { name: "Find quiet spot", completed: false },
-        { name: "Set timer", completed: false },
-        { name: "Focus on breath", completed: false },
-      ],
-    },
-  ]);
-
-  const handleNewHabit = (name: string, steps: string[]) => {
-    setHabits([
-      ...habits,
-      {
-        name,
-        steps: steps.map(step => ({ name: step, completed: false })),
-      },
-    ]);
-  };
-
-  const handleEditHabit = (index: number, name: string, steps: string[]) => {
-    const newHabits = [...habits];
-    newHabits[index] = {
-      name,
-      steps: steps.map(step => ({ name: step, completed: false })),
-    };
-    setHabits(newHabits);
-  };
-
-  const handleToggleStep = (habitIndex: number, stepIndex: number) => {
-    const newHabits = [...habits];
-    newHabits[habitIndex] = {
-      ...habits[habitIndex],
-      steps: habits[habitIndex].steps.map((step, i) =>
-        i === stepIndex ? { ...step, completed: !step.completed } : step
-      ),
-    };
-    setHabits(newHabits);
-  };
-
+function HabitListSkeleton() {
   return (
-    <div className="container mx-auto">
-      <NewHabitSheet onSubmit={handleNewHabit} />
-      <HabitList
-        habits={habits}
-        onEditHabit={handleEditHabit}
-        onToggleStep={handleToggleStep}
-      />
+    <div className="grid items-start gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
+      {[...Array(3)].map((_, i) => (
+        <div key={i} className="h-48 animate-pulse rounded-lg bg-muted" />
+      ))}
+    </div>
+  );
+}
+
+export default async function HabitsPage() {
+  const habits = await api.habit.getAll();
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto py-8">
+        <Suspense fallback={<HabitListSkeleton />}>
+          <div className="grid items-start gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
+            {habits.map((habit) => (
+              <HydrateClient key={habit.id}>
+                <HabitCard habit={habit} />
+              </HydrateClient>
+            ))}
+          </div>
+        </Suspense>
+        <HydrateClient>
+          <NewHabitSheet />
+        </HydrateClient>
+      </div>
     </div>
   );
 }

@@ -10,17 +10,23 @@ import {
   SheetTitle,
 } from "@ui/sheet";
 import { HabitForm } from "./HabitForm";
+import { api } from "~/trpc/react";
 
-interface NewHabitSheetProps {
-  onSubmit: (name: string, steps: string[]) => void;
-}
-
-export function NewHabitSheet({ onSubmit }: NewHabitSheetProps) {
+export function NewHabitSheet() {
   const [isOpen, setIsOpen] = useState(false);
+  const utils = api.useUtils();
+  const { mutate: createHabit } = api.habit.create.useMutation({
+    onSuccess: () => {
+      utils.habit.getAll.invalidate();
+      setIsOpen(false);
+    },
+  });
 
   const handleSubmit = (name: string, steps: string[]) => {
-    onSubmit(name, steps);
-    setIsOpen(false);
+    createHabit({
+      name,
+      steps: steps.map(description => ({ description })),
+    });
   };
 
   return (
@@ -29,13 +35,13 @@ export function NewHabitSheet({ onSubmit }: NewHabitSheetProps) {
         className="fixed bottom-6 right-6 h-14 w-14 rounded-full p-0 shadow-lg hover:shadow-xl"
         onClick={() => setIsOpen(true)}
       >
-        <Plus size={24} />
+        <Plus className="h-6 w-6" />
       </Button>
       <SheetContent>
         <SheetHeader>
           <SheetTitle>New Habit</SheetTitle>
         </SheetHeader>
-        <div className="mt-6">
+        <div className="mt-4">
           <HabitForm onSubmit={handleSubmit} />
         </div>
       </SheetContent>
