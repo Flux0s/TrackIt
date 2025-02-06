@@ -50,7 +50,7 @@ export function DatePicker() {
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
             {selectedDate ? (
-              format(selectedDate, "EEEEEE M/dd/yy")
+              format(selectedDate, "EEEEEE M/d/yy")
             ) : (
               <span>Pick a date</span>
             )}
