@@ -4,9 +4,10 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 
 export const habitRouter = createTRPCRouter({
-  create: protectedProcedure
+  upsert: protectedProcedure
     .input(
       z.object({
+        id: z.string().optional(),
         name: z.string().min(1),
         steps: z
           .array(
@@ -18,6 +19,46 @@ export const habitRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // If id is provided, verify the habit belongs to the user
+      if (input.id) {
+        const existingHabit = await ctx.db.habit.findFirst({
+          where: { 
+            id: input.id,
+            createdById: ctx.session.user.id 
+          },
+        });
+        
+        if (!existingHabit) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Habit not found",
+          });
+        }
+
+        // Update existing habit
+        return ctx.db.habit.update({
+          where: { id: input.id },
+          data: {
+            name: input.name,
+            steps: {
+              deleteMany: {},  // Remove all existing steps
+              create: input.steps.map((step, index) => ({
+                description: step.description,
+                order: index,
+              })),
+            },
+          },
+          include: {
+            steps: {
+              orderBy: {
+                order: "asc",
+              },
+            },
+          },
+        });
+      }
+
+      // Create new habit
       return ctx.db.habit.create({
         data: {
           name: input.name,
@@ -85,11 +126,22 @@ export const habitRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.habit.delete({
-        where: {
+      const habit = await ctx.db.habit.findFirst({
+        where: { 
           id: input.id,
-          createdById: ctx.session.user.id,
+          createdById: ctx.session.user.id 
         },
+      });
+      
+      if (!habit) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Habit not found",
+        });
+      }
+
+      return ctx.db.habit.delete({
+        where: { id: input.id },
       });
     }),
 
