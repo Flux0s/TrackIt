@@ -2,22 +2,19 @@
 "use client";
 
 // Import UI components and utilities
-import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
-import { Button } from "@ui/button";
-import { Ban, Pencil } from "lucide-react";
-import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
+import { Button } from "@components/ui/button";
+import { Checkbox } from "@components/ui/checkbox";
+import { Label } from "@components/ui/label";
+import { api, RouterOutputs } from "~/trpc/react";
 import { HabitForm } from "./HabitForm";
+import { PencilIcon } from "lucide-react";
+import { useState } from "react";
 import { cn } from "@lib/utils";
-import { Checkbox } from "@ui/checkbox";
-import { RouterOutputs, api } from "~/trpc/react";
-import { Label } from "../ui/label";
-
-// Define the Habit type using the API response type
-type Habit = RouterOutputs["habit"]["getAll"][0];
-
 // Props interface for the HabitCard component
 interface HabitCardProps {
-  habit: Habit;
+  habit: RouterOutputs["habit"]["getAll"][0];
+  completions: RouterOutputs["habit"]["getCompletions"];
 }
 
 /**
@@ -26,21 +23,31 @@ interface HabitCardProps {
  * Features:
  * - Toggle steps completion status
  * - Edit habit name and steps
- * - Responsive UI with animations
  */
-export function HabitCard({ habit }: HabitCardProps) {
+export function HabitCard({ habit, completions }: HabitCardProps) {
   // State to control the edit mode of the card
   const [isEditing, setIsEditing] = useState(false);
   // Get TRPC utilities for cache invalidation
   const utils = api.useUtils();
+  const date = new Date();
 
   // Mutation hook for toggling step completion status
   const { mutate: toggleStep } = api.habit.toggleStep.useMutation({
     onSuccess: () => {
-      // Invalidate the habits cache to trigger a refresh
-      utils.habit.getAll.invalidate();
+      // Invalidate the completions cache to trigger a refresh
+      void utils.habit.getCompletions.invalidate({
+        date,
+      });
     },
   });
+
+  // Handler for checkbox change
+  const handleStepToggle = (stepId: string) => {
+    toggleStep({
+      stepId,
+      date,
+    });
+  };
 
   // Handler for form submission when editing habit
   const handleEditSubmit = (name: string, steps: string[]) => {
@@ -48,30 +55,17 @@ export function HabitCard({ habit }: HabitCardProps) {
     // TODO: Implement edit functionality
   };
 
-  // Handler for toggling step completion status
-  const handleToggleStep = (stepId: string) => {
-    toggleStep({
-      stepId,
-      date: new Date(),
-    });
-  };
-
   return (
     <Card>
       {/* Card header with habit name and edit button */}
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 py-4">
-        <CardTitle>{isEditing ? "Edit" : habit.name}</CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-2xl font-bold">{habit.name}</CardTitle>
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setIsEditing((prev) => !prev)}
-          className={cn(
-            "rounded-full",
-            "transition-transform duration-200",
-            isEditing && "rotate-90", // Rotate button when in edit mode
-          )}
+          onClick={() => setIsEditing(!isEditing)}
         >
-          {isEditing ? <Ban className="text-destructive" /> : <Pencil />}
+          <PencilIcon className="h-4 w-4" />
         </Button>
       </CardHeader>
       <CardContent>
@@ -89,19 +83,23 @@ export function HabitCard({ habit }: HabitCardProps) {
             // Display list of steps with checkboxes
             <div className="space-y-2">
               {habit.steps.map((step) => {
-                const isCompleted = step.completions.length > 0;
+                const isCompleted = completions.find(
+                  (completion) => completion.stepId === step.id,
+                )
+                  ? true
+                  : false;
                 return (
                   <div key={step.id} className="flex items-center space-x-2">
                     <Checkbox
                       id={step.id}
                       checked={isCompleted}
-                      onCheckedChange={() => handleToggleStep(step.id)}
+                      onCheckedChange={() => handleStepToggle(step.id)}
                     />
                     <Label
                       htmlFor={step.id}
                       className={cn(
                         "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-                        isCompleted && "line-through opacity-70", // Style completed steps
+                        isCompleted && "line-through opacity-70",
                       )}
                     >
                       {step.description}

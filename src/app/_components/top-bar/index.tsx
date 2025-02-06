@@ -5,6 +5,8 @@ import { CircleCheckBig } from "lucide-react";
 import { ThemeSwitcher } from "./theme-switcher";
 import UserMenu from "./user-menu";
 import Navigation from "./navigation";
+import { DateSelector } from "../habits/DateSelector";
+import { DatePicker } from "./DatePicker";
 
 function LoginButton() {
   return (
@@ -32,6 +34,7 @@ export default async function TopBar() {
       {session ? <Navigation /> : null}
 
       <div className="flex gap-1">
+        <DatePicker />
         <ThemeSwitcher />
         {session ? (
           <UserMenu

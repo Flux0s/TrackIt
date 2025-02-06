@@ -48,23 +48,39 @@ export const habitRouter = createTRPCRouter({
           orderBy: {
             order: "asc",
           },
-          include: {
-            completions: {
-              where: {
-                // Get completions for today only
-                date: {
-                  gte: new Date(new Date().setHours(0, 0, 0, 0)),
-                  lt: new Date(new Date().setHours(23, 59, 59, 999)),
-                },
-              },
-            },
-          },
         },
       },
     });
 
     return habits;
   }),
+
+  getCompletions: protectedProcedure
+    .input(
+      z.object({
+        date: z.date(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const startOfDay = new Date(input.date);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(input.date);
+      endOfDay.setHours(23, 59, 59, 999);
+
+      const completions = await ctx.db.habitStepCompletion.findMany({
+        where: {
+          habit: {
+            createdById: ctx.session.user.id,
+          },
+          date: {
+            gte: startOfDay,
+            lt: endOfDay,
+          },
+        },
+      });
+
+      return completions;
+    }),
 
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
@@ -174,7 +190,7 @@ export const habitRouter = createTRPCRouter({
       );
     }),
 
-  getCompletions: protectedProcedure
+  getCompletionsForDateRange: protectedProcedure
     .input(
       z.object({
         habitId: z.string(),

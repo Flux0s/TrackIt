@@ -7,6 +7,7 @@ import { TRPCReactProvider } from "~/trpc/react";
 import TopBar from "@components/top-bar";
 import { ThemeProvider } from "@lib/theme-provider";
 import { ScrollArea } from "@components/ui/scroll-area";
+import { DateProvider } from "@components/habits/DateContext";
 
 export const metadata: Metadata = {
   title: "TrackIt",
@@ -26,10 +27,12 @@ export default function RootLayout({
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <TRPCReactProvider>
-            <ScrollArea className="h-screen">
-              <TopBar />
-              {children}
-            </ScrollArea>
+            <DateProvider>
+              <ScrollArea className="h-screen">
+                <TopBar />
+                {children}
+              </ScrollArea>
+            </DateProvider>
           </TRPCReactProvider>
         </ThemeProvider>
       </body>
