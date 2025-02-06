@@ -1,14 +1,14 @@
-import { HabitCard } from "@components/habits/HabitCard";
 import { NewHabitSheet } from "@components/habits/NewHabitSheet";
 import { api } from "~/trpc/server";
 import { HydrateClient } from "~/trpc/server";
 import { Suspense } from "react";
+import { HabitList } from "@components/habits/HabitList";
 import { Skeleton } from "@components/ui/skeleton";
 
 function HabitListSkeleton() {
   return (
     <div className="grid items-start gap-x-10 gap-y-14 p-4 md:grid-cols-2 lg:grid-cols-3">
-      {[...Array(9)].map((_, i) => (
+      {[...Array(3)].map((_, i) => (
         <div key={i} className="flex flex-col p-4">
           <Skeleton className="mb-4 h-5 w-full rounded-xl" />
           <div className="flex flex-col space-y-3">
@@ -24,18 +24,14 @@ function HabitListSkeleton() {
 }
 
 export default async function HabitsPage() {
-  const habits = await api.habit.getAll();
+  void api.habit.getAll.prefetch();
   return (
     <div className="container mx-auto py-8">
-      <Suspense fallback={<HabitListSkeleton />}>
-        <div className="grid items-start gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
-          {habits.map((habit) => (
-            <HydrateClient key={habit.id}>
-              <HabitCard habit={habit} />
-            </HydrateClient>
-          ))}
-        </div>
-      </Suspense>
+      <HydrateClient>
+        <Suspense fallback={<HabitListSkeleton />}>
+          <HabitList />
+        </Suspense>
+      </HydrateClient>
       <NewHabitSheet />
     </div>
   );
