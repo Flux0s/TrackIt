@@ -8,7 +8,7 @@ import { Checkbox } from "@components/ui/checkbox";
 import { Label } from "@components/ui/label";
 import { api, RouterOutputs } from "~/trpc/react";
 import { HabitForm } from "./HabitForm";
-import { PencilIcon } from "lucide-react";
+import { BanIcon, PencilIcon } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@lib/utils";
 // Props interface for the HabitCard component
@@ -64,8 +64,17 @@ export function HabitCard({ habit, completions }: HabitCardProps) {
           variant="ghost"
           size="icon"
           onClick={() => setIsEditing(!isEditing)}
+          className={cn(
+            "rounded-full",
+            "transition-transform duration-200",
+            isEditing && "rotate-90", // Rotate button when in edit mode
+          )}
         >
-          <PencilIcon className="h-4 w-4" />
+          {isEditing ? (
+            <BanIcon className="text-destructive" />
+          ) : (
+            <PencilIcon />
+          )}
         </Button>
       </CardHeader>
       <CardContent>
