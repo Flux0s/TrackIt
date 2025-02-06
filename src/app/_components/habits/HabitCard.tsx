@@ -66,7 +66,8 @@ export function HabitCard({ habit }: HabitCardProps) {
           size="icon"
           onClick={() => setIsEditing((prev) => !prev)}
           className={cn(
-            "rounded-fulltransition-transform duration-200",
+            "rounded-full",
+            "transition-transform duration-200",
             isEditing && "rotate-90", // Rotate button when in edit mode
           )}
         >
