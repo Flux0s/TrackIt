@@ -18,7 +18,7 @@ export default async function TopBar() {
   const session = await auth();
 
   return (
-    <div className="flex justify-between bg-slate-300  dark:bg-slate-900 px-4 py-2 ">
+    <div className="sticky top-0 flex justify-between bg-slate-300 px-4 py-2 dark:bg-slate-900">
       <Link href="/">
         <Button
           variant={"ghost"}

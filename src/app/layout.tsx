@@ -6,6 +6,7 @@ import { type Metadata } from "next";
 import { TRPCReactProvider } from "~/trpc/react";
 import TopBar from "@components/top-bar";
 import { ThemeProvider } from "@lib/theme-provider";
+import { ScrollArea } from "@components/ui/scroll-area";
 
 export const metadata: Metadata = {
   title: "TrackIt",
@@ -23,14 +24,12 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-        >
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <TRPCReactProvider>
-            <TopBar />
-            {children}
+            <ScrollArea className="h-screen">
+              <TopBar />
+              {children}
+            </ScrollArea>
           </TRPCReactProvider>
         </ThemeProvider>
       </body>
