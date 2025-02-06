@@ -103,11 +103,12 @@ export const habitRouter = createTRPCRouter({
       }
 
       // Check if the step is already completed for this date
-      const existing = await ctx.db.habitStepCompletion.findUnique({
+      const existing = await ctx.db.habitStepCompletion.findFirst({
         where: {
-          stepId_date: {
-            stepId: input.stepId,
-            date: input.date,
+          stepId: input.stepId,
+          date: {
+            gte: new Date(input.date.setHours(0, 0, 0, 0)),
+            lt: new Date(input.date.setHours(23, 59, 59, 999)),
           },
         },
       });

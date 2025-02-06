@@ -43,7 +43,7 @@ export function HabitCard({ habit }: HabitCardProps) {
   });
 
   // Handler for form submission when editing habit
-  const handleSubmit = (name: string, steps: string[]) => {
+  const handleEditSubmit = (name: string, steps: string[]) => {
     setIsEditing(false);
     // TODO: Implement edit functionality
   };
@@ -83,7 +83,7 @@ export function HabitCard({ habit }: HabitCardProps) {
                 name: habit.name,
                 steps: habit.steps.map((step) => step.description),
               }}
-              onSubmit={handleSubmit}
+              onSubmit={handleEditSubmit}
             />
           ) : (
             // Display list of steps with checkboxes
