@@ -7,6 +7,7 @@ import UserMenu from "./user-menu";
 import Navigation from "./navigation";
 import { DateSelector } from "../habits/DateSelector";
 import { DatePicker } from "./DatePicker";
+import { Separator } from "../ui/separator";
 
 function LoginButton() {
   return (
@@ -33,8 +34,9 @@ export default async function TopBar() {
 
       {session ? <Navigation /> : null}
 
-      <div className="flex gap-1">
+      <div className="flex items-center gap-2">
         <DatePicker />
+        <Separator orientation="vertical" className="h-6" />
         <ThemeSwitcher />
         {session ? (
           <UserMenu
