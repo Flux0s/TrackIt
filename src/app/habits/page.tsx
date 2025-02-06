@@ -26,19 +26,17 @@ function HabitListSkeleton() {
 export default async function HabitsPage() {
   const habits = await api.habit.getAll();
   return (
-    <div className="bg-background">
-      <div className="container mx-auto py-8">
-        <Suspense fallback={<HabitListSkeleton />}>
-          <div className="grid items-start gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
-            {habits.map((habit) => (
-              <HydrateClient key={habit.id}>
-                <HabitCard habit={habit} />
-              </HydrateClient>
-            ))}
-          </div>
-        </Suspense>
-        <NewHabitSheet />
-      </div>
+    <div className="container mx-auto py-8">
+      <Suspense fallback={<HabitListSkeleton />}>
+        <div className="grid items-start gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
+          {habits.map((habit) => (
+            <HydrateClient key={habit.id}>
+              <HabitCard habit={habit} />
+            </HydrateClient>
+          ))}
+        </div>
+      </Suspense>
+      <NewHabitSheet />
     </div>
   );
 }
