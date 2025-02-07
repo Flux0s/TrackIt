@@ -125,13 +125,13 @@ export function HabitForm({ habit, onSuccess }: HabitFormProps) {
   };
 
   const handleSubmit = (values: FormValues) => {
-    const nonEmptySteps = values.steps.filter(
-      (step) => step.description.trim() !== "",
-    );
+    const nonEmptySteps = values.steps
+      .map((step) => ({ description: step.description.trim() }))
+      .filter((step) => step.description !== "");
 
     upsertHabit({
       id: habit?.id,
-      name: values.habitName,
+      name: values.habitName.trim(),
       steps: nonEmptySteps,
     });
   };
