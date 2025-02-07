@@ -5,6 +5,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
 import { Button } from "@components/ui/button";
 import { Checkbox } from "@components/ui/checkbox";
 import { Label } from "@components/ui/label";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../ui/alert-dialog";
 
 // Icons
 import { BanIcon, PencilIcon, Trash2Icon } from "lucide-react";
@@ -17,6 +27,7 @@ import { useState } from "react";
 
 // Related Components
 import { HabitForm } from "./HabitForm";
+import { Separator } from "../ui/separator";
 
 // Types
 interface HabitCardProps {
@@ -62,6 +73,7 @@ function StepItem({ step, isCompleted, onToggle }: StepItemProps) {
 export function HabitCard({ habit, completions }: HabitCardProps) {
   // State
   const [isEditing, setIsEditing] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   // Hooks
   const utils = api.useUtils();
@@ -91,77 +103,87 @@ export function HabitCard({ habit, completions }: HabitCardProps) {
   };
 
   const handleDelete = () => {
-    if (window.confirm("Are you sure you want to delete this habit?")) {
-      deleteHabit({ id: habit.id });
-    }
+    deleteHabit({ id: habit.id });
+    setShowDeleteDialog(false);
   };
 
-  // Render edit form if in edit mode
-  if (isEditing) {
-    return (
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-medium">Edit Habit</CardTitle>
-          <div className="flex gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
+  // Render
+  return (
+    <>
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete the habit "{habit.name}" and all its
+              steps and completions. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
               onClick={handleDelete}
-              className="rounded-full text-destructive hover:text-destructive"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              <Trash2Icon className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsEditing(false)}
-              className={cn(
-                "rounded-full",
-                "transition-transform duration-200",
-                isEditing && "rotate-90",
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex flex-row items-center justify-between">
+            {isEditing ? "Edit Habit" : habit.name}
+            <div className="flex gap-1">
+              {isEditing && (
+                <Button
+                  id={`delete-${habit.id}`}
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowDeleteDialog(true)}
+                  className="m-0 rounded-full text-destructive hover:text-destructive"
+                >
+                  <Trash2Icon />
+                </Button>
               )}
-            >
-              <BanIcon className="text-destructive" />
-            </Button>
-          </div>
+              <Button
+                id={`edit-toggle-${habit.id}`}
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsEditing(!isEditing)}
+                className={cn(
+                  "rounded-full transition-transform duration-200",
+                  isEditing && "rotate-90",
+                )}
+              >
+                {isEditing ? (
+                  <BanIcon className="m-0 text-destructive" />
+                ) : (
+                  <PencilIcon className="m-0" />
+                )}
+              </Button>
+            </div>
+          </CardTitle>
         </CardHeader>
-        <CardContent>
-          <HabitForm habit={habit} onSuccess={() => setIsEditing(false)} />
+        <Separator className="my-2" />
+        <CardContent className="flex flex-col py-2">
+          {isEditing ? (
+            <HabitForm habit={habit} onSuccess={() => setIsEditing(false)} />
+          ) : (
+            <div className="flex flex-col gap-2">
+              {habit.steps.map((step) => (
+                <StepItem
+                  key={step.id}
+                  step={step}
+                  isCompleted={completions.some((c) => c.stepId === step.id)}
+                  onToggle={handleStepToggle}
+                />
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
-    );
-  }
-
-  // Render normal view
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium">{habit.name}</CardTitle>
-        <div className="flex gap-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsEditing(true)}
-            className="rounded-full"
-          >
-            <PencilIcon className="h-4 w-4" />
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-2">
-          {habit.steps.map((step) => (
-            <StepItem
-              key={step.id}
-              step={step}
-              isCompleted={completions.some(
-                (completion) => completion.stepId === step.id,
-              )}
-              onToggle={handleStepToggle}
-            />
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+    </>
   );
 }
