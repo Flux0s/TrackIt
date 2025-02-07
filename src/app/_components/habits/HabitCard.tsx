@@ -88,7 +88,7 @@ export function HabitCard({ habit, completions }: HabitCardProps) {
         </AlertDialogContent>
       </AlertDialog>
 
-      <Card>
+      <Card className="h-full">
         <CardHeader>
           <CardTitle className="flex flex-row items-center justify-between">
             {isEditing ? "Edit Habit" : habit.name}

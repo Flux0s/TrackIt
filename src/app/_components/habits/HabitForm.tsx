@@ -23,7 +23,7 @@ import { api, type RouterOutputs } from "~/trpc/react";
 
 // Types
 interface HabitFormProps {
-  habit: RouterOutputs["habit"]["getAll"][0];
+  habit?: RouterOutputs["habit"]["getAll"][0] | undefined;
   onSuccess: () => void;
 }
 
@@ -88,9 +88,13 @@ function StepField({
  * - Form validation
  */
 export function HabitForm({ habit, onSuccess }: HabitFormProps) {
+  const utils = api.useUtils();
   // Mutations
   const { mutate: upsertHabit } = api.habit.upsert.useMutation({
-    onSuccess,
+    onSuccess: () => {
+      void utils.habit.getAll.invalidate();
+      onSuccess();
+    },
   });
 
   // Form Setup
