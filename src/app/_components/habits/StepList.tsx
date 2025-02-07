@@ -1,12 +1,14 @@
 "use client";
 
+// UI Components
 import { Checkbox } from "@components/ui/checkbox";
 import { Label } from "@components/ui/label";
 import { Skeleton } from "@components/ui/skeleton";
+
+// Utilities and Hooks
 import { cn } from "@lib/utils";
 import { useEffect, useState } from "react";
-import { RouterOutputs } from "~/trpc/react";
-import { api } from "~/trpc/react";
+import { api, RouterOutputs } from "~/trpc/react";
 import { useDateContext } from "@components/habits/DateContext";
 
 // Types
@@ -21,7 +23,10 @@ interface StepListProps {
   completions: RouterOutputs["habit"]["getCompletions"];
 }
 
-// Step Item Component
+/**
+ * StepItem Component
+ * Renders a single step with a checkbox and label
+ */
 function StepItem({ step, isCompleted, onToggle }: StepItemProps) {
   return (
     <div className="flex items-center space-x-2">
@@ -43,7 +48,9 @@ function StepItem({ step, isCompleted, onToggle }: StepItemProps) {
   );
 }
 
-// Loading skeleton for step item
+/**
+ * Loading skeleton for a single step item
+ */
 function StepItemSkeleton() {
   return (
     <div className="flex items-center space-x-2">
@@ -53,12 +60,18 @@ function StepItemSkeleton() {
   );
 }
 
-// Steps list with completions data
+/**
+ * StepList Component
+ * Displays a list of steps for a habit with completion status
+ * Handles optimistic updates when toggling step completion
+ */
 export function StepList({ habit, completions }: StepListProps) {
+  // State
   const [optimisticCompletions, setOptimisticCompletions] =
     useState(completions);
+  
+  // Hooks
   const { selectedDate } = useDateContext();
-
   const utils = api.useUtils();
 
   // Update optimistic completions when actual completions change
@@ -66,6 +79,7 @@ export function StepList({ habit, completions }: StepListProps) {
     setOptimisticCompletions(completions);
   }, [completions]);
 
+  // Mutations
   const { mutate: toggleStep } = api.habit.toggleStep.useMutation({
     onSuccess: () => {
       void utils.habit.getCompletions.invalidate({
@@ -73,14 +87,17 @@ export function StepList({ habit, completions }: StepListProps) {
       });
     },
     onMutate: async ({ stepId }) => {
+      // Cancel any outgoing refetches
       await utils.habit.getCompletions.cancel({ date: selectedDate });
 
       // Optimistically update the local state
       setOptimisticCompletions((old) => {
         const isCompleted = old.some((c) => c.stepId === stepId);
         if (isCompleted) {
+          // Remove completion if step was completed
           return old.filter((c) => c.stepId !== stepId);
         } else {
+          // Add completion if step was not completed
           return [
             ...old,
             {
@@ -94,6 +111,7 @@ export function StepList({ habit, completions }: StepListProps) {
         }
       });
 
+      // Return context for rollback on error
       return { prevCompletions: completions };
     },
     onError: (_err, _vars, context) => {
@@ -104,6 +122,7 @@ export function StepList({ habit, completions }: StepListProps) {
     },
   });
 
+  // Event Handlers
   const handleStepToggle = (stepId: string) => {
     toggleStep({
       stepId,
@@ -117,7 +136,7 @@ export function StepList({ habit, completions }: StepListProps) {
         <StepItem
           key={step.id}
           step={step}
-          isCompleted={completions.some((c) => c.stepId === step.id)}
+          isCompleted={optimisticCompletions.some((c) => c.stepId === step.id)}
           onToggle={handleStepToggle}
         />
       ))}
@@ -125,7 +144,9 @@ export function StepList({ habit, completions }: StepListProps) {
   );
 }
 
-// Loading state for steps list
+/**
+ * Loading state for the entire steps list
+ */
 export function StepListSkeleton({ habit }: { habit: StepListProps["habit"] }) {
   return (
     <div className="flex flex-col gap-2">
