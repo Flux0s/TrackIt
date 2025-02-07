@@ -80,21 +80,28 @@ export const habitRouter = createTRPCRouter({
       });
     }),
 
-  getAll: protectedProcedure.query(async ({ ctx }) => {
-    const habits = await ctx.db.habit.findMany({
-      where: { createdById: ctx.session.user.id },
-      orderBy: { createdAt: "desc" },
-      include: {
-        steps: {
-          orderBy: {
-            order: "asc",
+  getAll: protectedProcedure
+    .input(
+      z.object({
+        sortBy: z.enum(["name", "createdAt"]).optional().default("createdAt"),
+        sortDirection: z.enum(["asc", "desc"]).optional().default("desc"),
+      }).optional(),
+    )
+    .query(async ({ ctx, input }) => {
+      const habits = await ctx.db.habit.findMany({
+        where: { createdById: ctx.session.user.id },
+        orderBy: { [input?.sortBy ?? "createdAt"]: input?.sortDirection ?? "desc" },
+        include: {
+          steps: {
+            orderBy: {
+              order: "asc",
+            },
           },
         },
-      },
-    });
+      });
 
-    return habits;
-  }),
+      return habits;
+    }),
 
   getCompletions: protectedProcedure
     .input(

@@ -9,16 +9,14 @@ import { ArrowDownAZ, ArrowUpAZ } from "lucide-react";
 
 export function HabitList() {
   const { selectedDate } = useDateContext();
-  const [habits] = api.habit.getAll.useSuspenseQuery();
-  const { data: completions = [] } = api.habit.getCompletions.useQuery({
-    date: selectedDate,
-  });
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
-  // Sort habits by name
-  const sortedHabits = [...habits].sort((a, b) => {
-    const comparison = a.name.localeCompare(b.name);
-    return sortDirection === "asc" ? comparison : -comparison;
+  const [habits] = api.habit.getAll.useSuspenseQuery(
+    sortDirection ? { sortBy: "name", sortDirection } : undefined,
+  );
+
+  const { data: completions = [] } = api.habit.getCompletions.useQuery({
+    date: selectedDate,
   });
 
   const toggleSort = () => {
@@ -48,7 +46,7 @@ export function HabitList() {
         </Button>
       </div>
       <div className="xs:grid-cols-2 grid items-start gap-4 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {sortedHabits.map((habit) => {
+        {habits.map((habit) => {
           const habitCompletions = completions.filter(
             (completion) => completion.habitId === habit.id,
           );
