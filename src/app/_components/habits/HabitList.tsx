@@ -18,18 +18,23 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@ui/dropdown-menu";
+import { type z } from "zod";
+import { sortSchema } from "~/server/api/routers/habit";
 
-type SortField = "name" | "createdAt";
+type SortField = z.infer<typeof sortSchema.sortBy>;
+type SortDirection = z.infer<typeof sortSchema.sortDirection>;
 
 export function HabitList() {
   const { selectedDate } = useDateContext();
   const [sortField, setSortField] = useState<SortField | null>(null);
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc" | null>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection | null>(
+    null,
+  );
 
   // Initialize sort state on client side only
   useEffect(() => {
-    setSortField("name");
-    setSortDirection("asc");
+    setSortField("createdAt");
+    setSortDirection("desc");
   }, []);
 
   const [habits] = api.habit.getAll.useSuspenseQuery(

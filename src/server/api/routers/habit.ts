@@ -3,6 +3,11 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 
+export const sortSchema = {
+  sortBy: z.enum(["name", "createdAt"]),
+  sortDirection: z.enum(["asc", "desc"]),
+} as const;
+
 export const habitRouter = createTRPCRouter({
   upsert: protectedProcedure
     .input(
@@ -83,8 +88,8 @@ export const habitRouter = createTRPCRouter({
   getAll: protectedProcedure
     .input(
       z.object({
-        sortBy: z.enum(["name", "createdAt"]).optional().default("createdAt"),
-        sortDirection: z.enum(["asc", "desc"]).optional().default("desc"),
+        sortBy: sortSchema.sortBy.optional().default("createdAt"),
+        sortDirection: sortSchema.sortDirection.optional().default("desc"),
       }).optional(),
     )
     .query(async ({ ctx, input }) => {
