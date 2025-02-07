@@ -19,7 +19,7 @@ import { Check, Plus, X } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray, Control } from "react-hook-form";
 import * as z from "zod";
-import { api, type RouterInputs, type RouterOutputs } from "~/trpc/react";
+import { api, type RouterOutputs } from "~/trpc/react";
 
 // Types
 interface HabitFormProps {

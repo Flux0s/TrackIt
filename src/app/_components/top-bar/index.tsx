@@ -2,12 +2,11 @@ import Link from "next/link";
 import { auth } from "@server/auth";
 import { Button } from "@ui/button";
 import { CircleCheckBig } from "lucide-react";
-import { ThemeSwitcher } from "./theme-switcher";
-import UserMenu from "./user-menu";
-import Navigation from "./navigation";
-import { DateSelector } from "../habits/DateSelector";
-import { DatePicker } from "./DatePicker";
-import { Separator } from "../ui/separator";
+import { ThemeSwitcher } from "@components/top-bar/theme-switcher";
+import UserMenu from "@components/top-bar/user-menu";
+import Navigation from "@components/top-bar/navigation";
+import { DatePicker } from "@components/lib/DatePicker";
+import { Separator } from "@components/ui/separator";
 
 function LoginButton() {
   return (

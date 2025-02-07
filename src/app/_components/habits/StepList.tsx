@@ -9,7 +9,7 @@ import { Skeleton } from "@components/ui/skeleton";
 import { cn } from "@lib/utils";
 import { useEffect, useState } from "react";
 import { api, RouterOutputs } from "~/trpc/react";
-import { useDateContext } from "@components/habits/DateContext";
+import { useDateContext } from "~/app/_components/lib/DateContext";
 
 // Types
 interface StepItemProps {
@@ -69,7 +69,7 @@ export function StepList({ habit, completions }: StepListProps) {
   // State
   const [optimisticCompletions, setOptimisticCompletions] =
     useState(completions);
-  
+
   // Hooks
   const { selectedDate } = useDateContext();
   const utils = api.useUtils();

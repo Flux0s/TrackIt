@@ -1,7 +1,7 @@
 "use client";
 import { HabitCard } from "@components/habits/HabitCard";
+import { useDateContext } from "@components/lib/DateContext";
 import { api } from "~/trpc/react";
-import { useDateContext } from "@components/habits/DateContext";
 
 export function HabitList() {
   const { selectedDate } = useDateContext();
@@ -11,7 +11,7 @@ export function HabitList() {
   });
 
   return (
-    <div className="grid items-start gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid items-start gap-4 p-4 md:grid-cols-3 lg:grid-cols-5">
       {habits.map((habit) => {
         const habitCompletions = completions.filter(
           (completion) => completion.habitId === habit.id,

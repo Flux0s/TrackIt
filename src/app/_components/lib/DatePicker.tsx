@@ -15,7 +15,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { useDateContext } from "../habits/DateContext";
+import { useDateContext } from "../lib/DateContext";
 
 export function DatePicker() {
   const { selectedDate, setSelectedDate } = useDateContext();
@@ -57,6 +57,14 @@ export function DatePicker() {
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full rounded-none"
+            onClick={() => setSelectedDate(new Date())}
+          >
+            Today
+          </Button>
           <Calendar
             mode="single"
             selected={selectedDate}
