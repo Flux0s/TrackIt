@@ -3,8 +3,6 @@
 // UI Components
 import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
 import { Button } from "@components/ui/button";
-import { Checkbox } from "@components/ui/checkbox";
-import { Label } from "@components/ui/label";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,7 +12,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "../ui/alert-dialog";
+} from "@components/ui/alert-dialog";
+import { StepList } from "@components/habits/StepList";
 
 // Icons
 import { BanIcon, PencilIcon, Trash2Icon } from "lucide-react";
@@ -22,7 +21,6 @@ import { BanIcon, PencilIcon, Trash2Icon } from "lucide-react";
 // Utilities and Hooks
 import { cn } from "@lib/utils";
 import { api, RouterOutputs } from "~/trpc/react";
-import { useDateContext } from "./DateContext";
 import { useState } from "react";
 
 // Related Components
@@ -35,79 +33,38 @@ interface HabitCardProps {
   completions: RouterOutputs["habit"]["getCompletions"];
 }
 
-interface StepItemProps {
-  step: RouterOutputs["habit"]["getAll"][0]["steps"][0];
-  isCompleted: boolean;
-  onToggle: (stepId: string) => void;
-}
-
-// Step Item Component
-function StepItem({ step, isCompleted, onToggle }: StepItemProps) {
-  return (
-    <div className="flex items-center space-x-2">
-      <Checkbox
-        id={step.id}
-        checked={isCompleted}
-        onCheckedChange={() => onToggle(step.id)}
-      />
-      <Label
-        htmlFor={step.id}
-        className={cn(
-          "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-          isCompleted && "line-through opacity-70",
-        )}
-      >
-        {step.description}
-      </Label>
-    </div>
-  );
-}
-
 /**
  * HabitCard Component
  * Displays a habit with its steps and provides editing functionality
- * Features:
- * - Toggle steps completion status
- * - Edit habit name and steps
  */
 export function HabitCard({ habit, completions }: HabitCardProps) {
   // State
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
 
   // Hooks
   const utils = api.useUtils();
-  const { selectedDate } = useDateContext();
-
-  // Mutations
-  const { mutate: toggleStep } = api.habit.toggleStep.useMutation({
-    onSuccess: () => {
-      void utils.habit.getCompletions.invalidate({
-        date: selectedDate,
-      });
-    },
-  });
 
   const { mutate: deleteHabit } = api.habit.delete.useMutation({
     onSuccess: () => {
       void utils.habit.getAll.invalidate();
     },
+    onMutate: () => {
+      setIsDeleted(true);
+    },
+    onError: () => {
+      setIsDeleted(false);
+    },
   });
-
-  // Event Handlers
-  const handleStepToggle = (stepId: string) => {
-    toggleStep({
-      stepId,
-      date: selectedDate,
-    });
-  };
 
   const handleDelete = () => {
     deleteHabit({ id: habit.id });
     setShowDeleteDialog(false);
   };
 
-  // Render
+  if (isDeleted) return null;
+
   return (
     <>
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
@@ -171,16 +128,7 @@ export function HabitCard({ habit, completions }: HabitCardProps) {
           {isEditing ? (
             <HabitForm habit={habit} onSuccess={() => setIsEditing(false)} />
           ) : (
-            <div className="flex flex-col gap-2">
-              {habit.steps.map((step) => (
-                <StepItem
-                  key={step.id}
-                  step={step}
-                  isCompleted={completions.some((c) => c.stepId === step.id)}
-                  onToggle={handleStepToggle}
-                />
-              ))}
-            </div>
+            <StepList habit={habit} completions={completions} />
           )}
         </CardContent>
       </Card>

@@ -22,12 +22,12 @@ export const habitRouter = createTRPCRouter({
       // If id is provided, verify the habit belongs to the user
       if (input.id) {
         const existingHabit = await ctx.db.habit.findFirst({
-          where: { 
+          where: {
             id: input.id,
-            createdById: ctx.session.user.id 
+            createdById: ctx.session.user.id,
           },
         });
-        
+
         if (!existingHabit) {
           throw new TRPCError({
             code: "NOT_FOUND",
@@ -41,7 +41,7 @@ export const habitRouter = createTRPCRouter({
           data: {
             name: input.name,
             steps: {
-              deleteMany: {},  // Remove all existing steps
+              deleteMany: {}, // Remove all existing steps
               create: input.steps.map((step, index) => ({
                 description: step.description,
                 order: index,
@@ -115,7 +115,7 @@ export const habitRouter = createTRPCRouter({
           },
           date: {
             gte: startOfDay,
-            lt: endOfDay,
+            lte: endOfDay,
           },
         },
       });
@@ -127,12 +127,12 @@ export const habitRouter = createTRPCRouter({
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const habit = await ctx.db.habit.findFirst({
-        where: { 
+        where: {
           id: input.id,
-          createdById: ctx.session.user.id 
+          createdById: ctx.session.user.id,
         },
       });
-      
+
       if (!habit) {
         throw new TRPCError({
           code: "NOT_FOUND",
@@ -176,7 +176,7 @@ export const habitRouter = createTRPCRouter({
           stepId: input.stepId,
           date: {
             gte: new Date(input.date.setHours(0, 0, 0, 0)),
-            lt: new Date(input.date.setHours(23, 59, 59, 999)),
+            lte: new Date(input.date.setHours(23, 59, 59, 999)),
           },
         },
       });

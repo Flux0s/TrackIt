@@ -1,7 +1,7 @@
 "use client";
-import { HabitCard } from "./HabitCard";
+import { HabitCard } from "@components/habits/HabitCard";
 import { api } from "~/trpc/react";
-import { useDateContext } from "./DateContext";
+import { useDateContext } from "@components/habits/DateContext";
 
 export function HabitList() {
   const { selectedDate } = useDateContext();
