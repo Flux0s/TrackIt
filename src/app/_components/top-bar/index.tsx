@@ -21,17 +21,24 @@ export default async function TopBar() {
 
   return (
     <div className="sticky top-0 flex justify-between bg-slate-300 px-4 py-2 dark:bg-slate-900">
-      <Link href="/">
-        <Button
-          variant={"ghost"}
-          className="text-md gap-0 px-1 hover:bg-transparent"
-        >
-          {"TrackIt"}
-          <CircleCheckBig size={16} />
-        </Button>
-      </Link>
+      <div className="flex items-center justify-start gap-2">
+        <Link href="/">
+          <Button
+            variant={"ghost"}
+            className="gap-0 px-1 text-xl hover:bg-transparent"
+          >
+            {"TrackIt"}
+            <CircleCheckBig size={16} strokeWidth={3} />
+          </Button>
+        </Link>
 
-      {session ? <Navigation /> : null}
+        {session ? (
+          <>
+            <Separator orientation="vertical" className="h-6" />
+            <Navigation />
+          </>
+        ) : null}
+      </div>
 
       <div className="flex items-center gap-2">
         <DatePicker />
