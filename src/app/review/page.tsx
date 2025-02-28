@@ -1,29 +1,64 @@
-import { Suspense } from "react";
-import { api, HydrateClient } from "~/trpc/server";
+"use client";
 
-// TODO: Import review components once implemented
-// import { ReviewList } from "@components/review/ReviewList";
-// import { ReviewListSkeleton } from "@components/review/ReviewListSkeleton";
-// import { NewReviewSheet } from "@components/review/NewReviewSheet";
+import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+} from "@components/ui/chart";
+import { Area, AreaChart, XAxis, YAxis } from "recharts";
 
-export default async function ReviewPage() {
-  // TODO: Implement review data fetching
-  // void api.review.getAll.prefetch();
+// Test data for habit completions comparing current and previous week
+const testData = [
+  { date: "Mon", currentWeek: 3, previousWeek: 4 },
+  { date: "Tue", currentWeek: 5, previousWeek: 3 },
+  { date: "Wed", currentWeek: 4, previousWeek: 5 },
+  { date: "Thu", currentWeek: 7, previousWeek: 4 },
+  { date: "Fri", currentWeek: 6, previousWeek: 6 },
+  { date: "Sat", currentWeek: 8, previousWeek: 5 },
+  { date: "Sun", currentWeek: 5, previousWeek: 4 },
+];
 
+const chartConfig = {
+  currentWeek: {
+    label: "Current Week",
+    color: "hsl(var(--chart-1))",
+  },
+  previousWeek: {
+    label: "Previous Week",
+    color: "hsl(var(--chart-2))",
+  },
+} satisfies ChartConfig;
+
+export default function ReviewPage() {
   return (
     <div className="container mx-auto py-8">
-      <HydrateClient>
-        {/* TODO: Implement review components */}
-        <div className="text-center text-gray-500">
-          Review page components coming soon...
-        </div>
-        {/* 
-        <Suspense fallback={<ReviewListSkeleton />}>
-          <ReviewList />
-        </Suspense>
-        <NewReviewSheet />
-        */}
-      </HydrateClient>
+      <Card>
+        <CardHeader>
+          <CardTitle>Weekly Habit Completion Comparison</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ChartContainer config={chartConfig}>
+            <AreaChart data={testData}>
+              <XAxis dataKey="date" fontSize={12} />
+              <YAxis fontSize={12} width={35} />
+              <ChartTooltip />
+              <Area
+                type="monotone"
+                dataKey="previousWeek"
+                fillOpacity={0.2}
+                stackId="1"
+              />
+              <Area
+                type="monotone"
+                dataKey="currentWeek"
+                fillOpacity={0.2}
+                stackId="2"
+              />
+            </AreaChart>
+          </ChartContainer>
+        </CardContent>
+      </Card>
     </div>
   );
 }
